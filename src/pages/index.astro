@@ -1,0 +1,40 @@
+---
+import { getCollection } from "astro:content";
+import MainLayout from "../layouts/MainLayout.astro";
+import { formatDate, getVisiblePosts } from "../components/blog-utils";
+import blogfavicon from "../components/blogfavicon.png";
+
+const posts = getVisiblePosts(await getCollection("blog")).slice(0, 5);
+---
+
+<MainLayout title="Moonlog | Home" description="마크다운 기반 정적 블로그">
+  <section class="hero">
+    <div class="hero-head">
+      <img src={blogfavicon.src} alt="블로그 대표 아이콘" class="hero-icon" />
+      <div>
+        <h1>정적 페이지 블로그 스타터</h1>
+        <p class="muted">
+          마크다운으로 글을 쓰고, 태그/카테고리/월별 아카이브로 분류되는 블로그를
+          GitHub Pages에 배포할 수 있습니다.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-top: 1.5rem;">
+    <h2>최근 글</h2>
+    <div class="grid">
+      {
+        posts.map((post) => (
+          <article class="post-card">
+            <h3><a href={`/blog/${post.id}`}>{post.data.title}</a></h3>
+            <div class="meta">
+              <span>{formatDate(post.data.date)}</span>
+              <span>카테고리: {post.data.category}</span>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</MainLayout>

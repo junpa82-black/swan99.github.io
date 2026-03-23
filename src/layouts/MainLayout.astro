@@ -1,0 +1,46 @@
+---
+import "../styles/global.css";
+import blogfavicon from "../components/blogfavicon.png";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "개인 블로그" } = Astro.props;
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/png" href={blogfavicon.src} />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="/" class="brand" aria-label="Moonlog 홈">
+          <img src={blogfavicon.src} alt="Moonlog 아이콘" class="brand-icon" />
+          <span>Moonlog</span>
+        </a>
+        <nav class="main-nav" aria-label="주요 메뉴">
+          <a href="/" class={path === "/" ? "active" : ""}>Home</a>
+          <a href="/about" class={path === "/about" ? "active" : ""}>About</a>
+          <a href="/blog" class={path.startsWith("/blog") ? "active" : ""}>Blog</a>
+        </nav>
+      </div>
+    </header>
+    <main class="container page-main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="container">
+        <p>Built with Astro. Hosted on GitHub Pages.</p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "gh-pages-blog",
+  "version": "0.1.0",
+  "description": "Static blog for GitHub Pages with Astro",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "keywords": [
+    "astro",
+    "blog",
+    "github-pages",
+    "static-site"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "astro": "^6.0.8"
+  }
+}

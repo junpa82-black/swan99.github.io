@@ -1,0 +1,33 @@
+---
+import { getCollection } from "astro:content";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { formatDate, getVisiblePosts, toMonthKey } from "../../components/blog-utils";
+
+export async function getStaticPaths() {
+  const posts = getVisiblePosts(await getCollection("blog"));
+  const months = [...new Set(posts.map((post) => toMonthKey(post.data.date)))];
+  return months.map((month) => ({ params: { month } }));
+}
+
+const month = Astro.params.month ?? "";
+const posts = getVisiblePosts(await getCollection("blog")).filter(
+  (post) => toMonthKey(post.data.date) === month,
+);
+---
+
+<MainLayout title={`${month} 아카이브 | Moonlog`} description={`${month}에 작성한 글 목록`}>
+  <h1>{month} 아카이브</h1>
+  <div class="grid">
+    {
+      posts.map((post) => (
+        <article class="post-card">
+          <h2><a href={`/blog/${post.id}`}>{post.data.title}</a></h2>
+          <div class="meta">
+            <span>{formatDate(post.data.date)}</span>
+            <span>카테고리: {post.data.category}</span>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</MainLayout>

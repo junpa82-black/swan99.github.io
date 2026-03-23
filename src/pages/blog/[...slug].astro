@@ -1,0 +1,36 @@
+---
+import { getCollection, render } from "astro:content";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { formatDate, toSlugPart } from "../../components/blog-utils";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts
+    .filter((post) => !post.data.draft)
+    .map((post) => ({
+      params: { slug: post.id },
+      props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<MainLayout title={`${post.data.title} | Moonlog`} description={post.data.description}>
+  <article class="prose">
+    <h1>{post.data.title}</h1>
+    <div class="meta">
+      <span>{formatDate(post.data.date)}</span>
+      <span>
+        카테고리:
+        <a href={`/categories/${toSlugPart(post.data.category)}`}> {post.data.category}</a>
+      </span>
+    </div>
+    <div class="chips">
+      {post.data.tags.map((tag: string) => <a class="chip" href={`/tags/${toSlugPart(tag)}`}>#{tag}</a>)}
+    </div>
+    <hr style="border-color: #233156; margin: 1.2rem 0;" />
+    <Content />
+  </article>
+</MainLayout>

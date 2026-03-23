@@ -1,0 +1,41 @@
+---
+import { getCollection } from "astro:content";
+import MainLayout from "../../layouts/MainLayout.astro";
+import { formatDate, fromSlugPart, getVisiblePosts, toSlugPart } from "../../components/blog-utils";
+
+export async function getStaticPaths() {
+  const posts = getVisiblePosts(await getCollection("blog"));
+  const tags = new Set<string>();
+  for (const post of posts) {
+    post.data.tags.forEach((tag) => tags.add(tag));
+  }
+
+  return [...tags].map((tag) => ({
+    params: { tag: toSlugPart(tag) },
+    props: { originalTag: tag },
+  }));
+}
+
+const slugTag = Astro.params.tag ?? "";
+const originalTag = Astro.props.originalTag ?? fromSlugPart(slugTag);
+const posts = getVisiblePosts(await getCollection("blog")).filter((post) =>
+  post.data.tags.map((tag) => toSlugPart(tag)).includes(slugTag),
+);
+---
+
+<MainLayout title={`태그: ${originalTag} | Moonlog`} description={`${originalTag} 태그 글 모음`}>
+  <h1>태그: #{originalTag}</h1>
+  <div class="grid">
+    {
+      posts.map((post) => (
+        <article class="post-card">
+          <h2><a href={`/blog/${post.id}`}>{post.data.title}</a></h2>
+          <div class="meta">
+            <span>{formatDate(post.data.date)}</span>
+            <span>카테고리: {post.data.category}</span>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</MainLayout>
